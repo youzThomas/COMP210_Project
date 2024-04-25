@@ -102,6 +102,6 @@ public class Main {
         // infinite loop to go back to "Enter master password"
 
 
-
         // loop to read and execute commands until "Exit" is entered
 }
+//test
