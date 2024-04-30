@@ -1,6 +1,8 @@
 package assn07;
 
 import java.util.Scanner;
+import java.util.List;
+import java.util.Set;
 
 public class Main {
 
@@ -8,99 +10,78 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         Map<String,String> passwordManager = new PasswordManager<>();
 
-        boolean isAuthenticated = false;
-        while (!isAuthenticated) {
+        while (true) {
             System.out.println("Enter Master Password");
             String enteredPassword = scanner.nextLine();
-            isAuthenticated = passwordManager.checkMasterPassword(enteredPassword);
+            if (passwordManager.checkMasterPassword(enteredPassword)){
+                break;
+            }
         }
 
         while (true) {
-            System.out.println("Enter command:");
-            String command = scanner.nextLine().trim();
-
-            if (command.equalsIgnoreCase("Exit")) {
-                System.out.println("Exiting...");
+            String Command_1;
+            String Command_2;
+            Command_1 = scanner.nextLine();
+            if (Command_1.equals("Exit")){
                 break;
             }
 
-            String[] commandParts = command.split(" ");
+            switch (Command_1){
+                case ("New password"):
+                    Command_1 = scanner.nextLine();
+                    Command_2 = scanner.nextLine();
+                    passwordManager.put(Command_1, Command_2);
+                    System.out.println("New password added");
+                    break;
 
-            switch (commandParts[0].toLowerCase()) {
-                case "new password":
-                    if (commandParts.length == 3) {
-                        String website = commandParts[1];
-                        String password = commandParts[2];
-                        passwordManager.put(website, password);
-                        System.out.println("New password added");
+                case ("Get password"):
+                    Command_1 = scanner.nextLine();
+                    String password = passwordManager.get(Command_1);
+                    if (password == null) {
+                        System.out.println("Account does not exist");
                     } else {
-                        System.out.println("Invalid command format for 'New password'");
+                        System.out.println(password);
                     }
                     break;
 
-                case "get password":
-                    if (commandParts.length == 2) {
-                        String website = commandParts[1];
-                        String result = passwordManager.get(website);
-                        if (result == null) {
-                            System.out.println("Account does not exist");
-                        } else {
-                            System.out.println(result);
+                case ("Delete account"):
+                    Command_1 = scanner.nextLine();
+                    String d = passwordManager.remove(Command_1);
+                    if (d == null){
+                        System.out.println("Account does not exist");
+                    } else {
+                        System.out.println("Account deleted");
+                    }
+                    break;
+
+                case ("Check duplicate password"):
+                    Command_1 = scanner.nextLine();
+                    List<String> e = passwordManager.checkDuplicate(Command_1);
+                    if (e.isEmpty()){
+                        System.out.println("No account uses that password");
+                    } else {
+                        System.out.println("Websites using that password:");
+                        for (int i = 0; i < e.size(); i++){
+                            System.out.println(e.get(i));
                         }
-                    } else {
-                        System.out.println("Invalid command format for 'Get password'");
                     }
                     break;
 
-                case "delete account":
-                    if (commandParts.length == 2) {
-                        String website = commandParts[1];
-                        String removedPassword = passwordManager.remove(website);
-                        if (removedPassword == null) {
-                            System.out.println("Account does not exist");
-                        } else {
-                            System.out.println("Account deleted");
-                        }
-                    } else {
-                        System.out.println("Invalid command format for 'Delete account'");
+                case ("Get accounts"):
+                    Set<String> accounts = passwordManager.keySet();
+                    System.out.println("Your accounts:");
+                    for (String element : accounts) {
+                        System.out.println(element);
                     }
                     break;
-
-                case "check duplicate password":
-                    if (commandParts.length == 2) {
-                        String password = commandParts[1];
-                        var duplicateWebsites = passwordManager.checkDuplicate(password);
-                        if (duplicateWebsites.isEmpty()) {
-                            System.out.println("No account uses that password");
-                        } else {
-                            System.out.println("Websites using that password:");
-                            for (String website : duplicateWebsites) {
-                                System.out.println(website);
-                            }
-                        }
-                    } else {
-                        System.out.println("Invalid command format for 'Check duplicate password'");
-                    }
+                case ("Generate random password"):
+                    int length = Integer.parseInt(scanner.nextLine());
+                    System.out.println(passwordManager.generatesafeRandomPassword(length));
                     break;
-
-                case "get accounts":
-                    System.out.println("Command 'Get accounts' not implemented");
-                    break;
-
-                case "generate random password":
-                    System.out.println("Command 'Generate random password' not implemented");
-                    break;
-
                 default:
                     System.out.println("Command not found");
                     break;
             }
         }
     }
-        // your code below
-
-        // infinite loop to go back to "Enter master password"
-
-
-        // loop to read and execute commands until "Exit" is entered
 }
